@@ -1,7 +1,7 @@
 provider "google" {
-  project     = "saitejaameda"
+  project     = "saicharan-457910"
   region      = "us-central1"
-  credentials = file("jinkenskey.json")
+// credentials = file("jinkenskey.json")
 }
 
 resource "google_compute_instance" "terrainstancesai" {
