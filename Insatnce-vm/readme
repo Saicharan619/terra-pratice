@@ -1,21 +1,34 @@
-# 🚀 GCP VM Provisioning with Harness IACM & Terraform
-
-This project demonstrates how to create and destroy a virtual machine (VM) in **Google Cloud Platform (GCP)** using **Harness IACM**, **Terraform**, and **GitOps** principles.
 
 ---
 
-## 📁 Project Structure
+## 🛠️ What This Does
 
-- **Harness Pipeline:** Automates Terraform `init`, `plan`, and conditional `apply` or `destroy` based on input variable.
-- **Terraform Code (in Git):** Contains GCP provider configuration and VM resource definition.
-- **IACM Workspace:** Configured to connect to this Git repo and manage the Terraform state.
+- Creates a GCP VM using Terraform.
+- Harness IACM pipeline runs `init`, `plan`, and then conditionally executes:
+  - `apply` → Creates the VM.
+  - `destroy` → Deletes the VM.
 
 ---
 
-## ⚙️ Harness Pipeline Flow
+## 🧪 How It's Set Up
+
+### 🧾 Terraform (Inside `Instance-vm/main.tf`)
+
+Defines a Google Compute Engine instance with:
+- GCP provider setup
+- VM instance configuration
+- Optional firewall rules
+
+> Ensure you have a GCP service account key with required roles to manage compute instances.
+
+---
+
+### ⚙️ Harness IACM Pipeline
+
+Harness pipeline with:
+- **IACM plugin steps** for `init`, `plan`, `apply`, and `destroy`
+- **Input variable** (`choice`) to decide apply vs destroy
+- **Terraform workspace** connected to this repo
 
 ```yaml
-1. Init      → terraform init
-2. Plan      → terraform plan
-3. Apply     → terraform apply (if choice == "apply")
-4. Destroy   → terraform destroy (if choice == "destroy")
+choice: <+input>.default(apply).allowedValues(apply,destroy)
