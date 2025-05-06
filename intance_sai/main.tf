@@ -7,7 +7,7 @@ provider "google" {
 resource "google_compute_instance" "terrainstancesai" {
   count = 3 
   name = "harness-vm"
- / name = "charan-${count.index + 1}"
+//name = "charan-${count.index + 1}"
   zone             = "us-central1-a"
   machine_type     = "e2-medium"
   
