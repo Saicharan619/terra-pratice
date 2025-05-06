@@ -1,0 +1,44 @@
+pipeline:
+  name: charan-variable-terraform-vm
+  identifier: charanvariableterraformvm
+  projectIdentifier: SFTY_Training
+  orgIdentifier: default
+  tags: {}
+  stages:
+    - stage:
+        name: vm creation
+        identifier: vm_creation
+        description: ""
+        type: IACM
+        spec:
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          workspace: terraform_workspace_charan
+          execution:
+            steps:
+              - step:
+                  type: IACMTerraformPlugin
+                  name: init
+                  identifier: init
+                  timeout: 10m
+                  spec:
+                    command: init
+              - step:
+                  type: IACMTerraformPlugin
+                  name: plan
+                  identifier: plan
+                  timeout: 10m
+                  spec:
+                    command: plan
+              - step:
+                  type: IACMTerraformPlugin
+                  name: apply
+                  identifier: apply
+                  timeout: 10m
+                  spec:
+                    command: apply
+        tags: {}
