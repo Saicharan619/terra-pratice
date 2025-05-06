@@ -1,34 +1,81 @@
+# 🚀 GCP VM Creation Using Terraform and Harness IACM
+
+This project demonstrates how to create and destroy a Virtual Machine (VM) on **Google Cloud Platform (GCP)** using **Terraform**, executed via a **Harness IACM pipeline**.
 
 ---
 
-## 🛠️ What This Does
+## 📁 Project Structure
 
-- Creates a GCP VM using Terraform.
-- Harness IACM pipeline runs `init`, `plan`, and then conditionally executes:
-  - `apply` → Creates the VM.
-  - `destroy` → Deletes the VM.
+terra-pratice/
+└── Instance-vm/
+└── main.tf # Terraform configuration for GCP VM
+---
+
+## 🔧 Tools Used
+
+- **Terraform** – Infrastructure as Code
+- **GCP** – Cloud provider
+- **Harness** – CI/CD automation platform (IACM module)
+- **GitHub** – Code version control
 
 ---
 
-## 🧪 How It's Set Up
+## 📄 Terraform (`main.tf`) Summary
 
-### 🧾 Terraform (Inside `Instance-vm/main.tf`)
-
-Defines a Google Compute Engine instance with:
-- GCP provider setup
-- VM instance configuration
-- Optional firewall rules
-
-> Ensure you have a GCP service account key with required roles to manage compute instances.
+The configuration file:
+- Uses the `google` provider
+- Provisions a Compute Engine instance
+- Machine type: `e2-micro`
+- OS Image: Debian 11
+- Network: Default VPC
 
 ---
 
-### ⚙️ Harness IACM Pipeline
+## ⚙️ Harness IACM Pipeline Workflow
 
-Harness pipeline with:
-- **IACM plugin steps** for `init`, `plan`, `apply`, and `destroy`
-- **Input variable** (`choice`) to decide apply vs destroy
-- **Terraform workspace** connected to this repo
+Harness pipeline runs Terraform in sequence:
+
+1. `terraform init` – Initializes the config
+2. `terraform plan` – Shows execution plan
+3. `terraform apply` – Applies the changes (if user selects `apply`)
+4. `terraform destroy` – Destroys resources (if user selects `destroy`)
+
+### 🧾 Input Variable Example
 
 ```yaml
-choice: <+input>.default(apply).allowedValues(apply,destroy)
+variables:
+  - name: choice
+    type: String
+    value: <+input>.default(apply).allowedValues(apply,destroy)
+📌 Condition Example (Inside Apply Step)
+
+when:
+  stageStatus: Success
+  condition: <+pipeline.variables.choice>=="apply"
+✅ How to Run
+Push Terraform code to GitHub (in Instance-vm/ folder).
+
+Link the repo in Harness IACM.
+
+Configure workspace to use Instance-vm/ as root directory.
+
+Run the pipeline and provide input:
+
+apply → to create the VM
+
+destroy → to delete the VM
+
+🔐 Prerequisites
+GCP project with Compute Engine API enabled
+
+Service account with proper IAM roles (Compute Admin, etc.)
+
+GCP credentials configured in Harness
+
+Harness account with IACM module access
+
+🙋 Author
+**Sai Charan Reddy**  
+DevOps | Cloud | Automation  
+🔗 [LinkedIn](https://www.linkedin.com/in/saicharanreddydontiri/)  
+📂 [GitHub](https://github.com/Saicharan619)
